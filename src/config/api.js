@@ -1,6 +1,7 @@
 import axios from "axios"
 
-export const API_BASE_URL="http://localhost:8080"
+// export const API_BASE_URL="http://localhost:8080"
+export const API_BASE_URL="https://projectmanagementtoolbackend-production-86c3.up.railway.app"
 
 const api = axios.create({baseURL:API_BASE_URL})
 
