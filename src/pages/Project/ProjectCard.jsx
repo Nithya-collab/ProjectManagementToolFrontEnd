@@ -5,22 +5,29 @@ import { DotFilledIcon, DotsVerticalIcon } from '@radix-ui/react-icons'
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { deleteProject } from "@/Redux/Project/Action";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import EditProjectForm from "@/pages/Project/EditProjectForm";
+import { deleteProject, updateProject } from "@/Redux/Project/Action";
 
-function ProjectCard({item}) {
+function ProjectCard({ item }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleDelete = () => {
-      dispatch(deleteProject(item.id))
+    dispatch(deleteProject(item.id))
   }
- 
+
+  const handleUpdate = () => {
+    console.log(updateProject)
+    dispatch(updateProject(item.id))
+  }
+
   return (
     <Card className='p-5 w-full lg:max-w-3xl'>
       <div className="space-y-5">
         <div className="space-y-2">
           <div className="flex justify-between">
             <div className="flex items-center gap-5">
-              <h1 onClick={() => navigate("/project/"+item.id)} className="cursor-pointer font-bold text-lg">
+              <h1 onClick={() => navigate("/project/" + item.id)} className="cursor-pointer font-bold text-lg">
                 {item.name}
               </h1>
               <DotFilledIcon />
@@ -35,14 +42,30 @@ function ProjectCard({item}) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    Update
-                  </DropdownMenuItem>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => {
+                        e.preventDefault(); // stops menu from closing
+                        setDialogOpen(true); // manually open dialog
+                      }}>
+                        Edit Project
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        Edit Project
+                      </DialogHeader>
+                      <EditProjectForm project={item} />
+                    </DialogContent>
+                  </Dialog>
+
                   <DropdownMenuItem onClick={handleDelete}>
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu> 
+              </DropdownMenu>
+
+
             </div>
           </div>
           <p className="text-gray-500 text-sm">
