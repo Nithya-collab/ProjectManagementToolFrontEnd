@@ -6,6 +6,7 @@ import ChatReducer from "./Chat/Reducer"
 import commentReducer from "./Comment/Reducer"
 import issueReducer from "./Issue/Reducer"
 import subscriptionReducer from "./Subscription/Reducer"
+import metricsReducer from "./Metrics/Reducer"
 
 const rootReducer = combineReducers({
      auth:authReducer,
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
      chat:ChatReducer,
      comment:commentReducer,
      issue:issueReducer,
-     subscription:subscriptionReducer
+     subscription:subscriptionReducer,
+     metrics:metricsReducer,
 })
 
 export const store = legacy_createStore(rootReducer,applyMiddleware(thunk))
