@@ -1,9 +1,11 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { startMetricsPolling } from "@/Redux/Metrics/Action";
+"use client";
+
+import { useEffect, useState } from "react";
+import api from "@/config/api"; // ✅ your axios instance with JWT interceptor
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion, AnimatePresence } from "motion/react";
 import {
   LineChart,
   Line,
@@ -14,15 +16,28 @@ import {
 } from "recharts";
 
 export default function MetricsDashboard() {
-  const dispatch = useDispatch();
-  const { metrics, loading } = useSelector((state) => state.metrics);
+  const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch metrics with JWT
   useEffect(() => {
-    const stopPolling = dispatch(startMetricsPolling(10000)); // 10s interval
-    return () => stopPolling(); // clean up on unmount
-  }, [dispatch]);
+    async function fetchMetrics() {
+      try {
+        const res = await api.get("/api/metrics");
+        setMetrics(res.data);
+      } catch (err) {
+        console.error("Error fetching metrics", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  if (loading || !metrics) {
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 3000); // refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -34,6 +49,7 @@ export default function MetricsDashboard() {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Top Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Memory Usage"
@@ -61,6 +77,7 @@ export default function MetricsDashboard() {
         />
       </div>
 
+      {/* HTTP Requests Chart */}
       <Card>
         <CardHeader>HTTP Requests</CardHeader>
         <CardContent>
@@ -91,12 +108,24 @@ export default function MetricsDashboard() {
   );
 }
 
+// Reusable Metric Card with smooth updates
 function MetricCard({ title, value, extra, percent }) {
   return (
     <Card>
       <CardHeader>{title}</CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold">{value}</p>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={value}
+            className="text-2xl font-bold"
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ duration: 0.3 }}
+          >
+            {value}
+          </motion.p>
+        </AnimatePresence>
         <p className="text-sm text-muted-foreground">{extra}</p>
         <Progress value={percent} className="mt-2" />
       </CardContent>
