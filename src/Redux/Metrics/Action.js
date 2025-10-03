@@ -14,3 +14,14 @@ export const fetchMetrics = () => async (dispatch) => {
     dispatch({ type: FETCH_METRICS_FAILURE, payload: error });
   }
 };
+
+// ✅ New: polling wrapper
+export const startMetricsPolling = (intervalMs = 10000) => (dispatch) => {
+  dispatch(fetchMetrics()); // initial fetch
+  const id = setInterval(() => {
+    dispatch(fetchMetrics());
+  }, intervalMs);
+
+  // Return a function to stop polling
+  return () => clearInterval(id);
+};

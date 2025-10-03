@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMetrics } from "@/Redux/Metrics/Action";
+import { startMetricsPolling } from "@/Redux/Metrics/Action";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,11 +18,8 @@ export default function MetricsDashboard() {
   const { metrics, loading } = useSelector((state) => state.metrics);
 
   useEffect(() => {
-    dispatch(fetchMetrics());
-    const interval = setInterval(() => {
-      dispatch(fetchMetrics());
-    }, 10000);
-    return () => clearInterval(interval);
+    const stopPolling = dispatch(startMetricsPolling(10000)); // 10s interval
+    return () => stopPolling(); // clean up on unmount
   }, [dispatch]);
 
   if (loading || !metrics) {
