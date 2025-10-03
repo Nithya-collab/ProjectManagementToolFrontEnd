@@ -1,14 +1,20 @@
-import axios from "axios"
+import axios from "axios";
 
-export const API_BASE_URL="http://localhost:8080"
+export const API_BASE_URL = "http://localhost:8080";
 
-const api = axios.create({baseURL:API_BASE_URL})
+const api = axios.create({ baseURL: API_BASE_URL });
 
-const jwt = localStorage.getItem("jwt")
-
-console.log('jwt',jwt)
-
-api.defaults.headers.common["Authorization"]=`Bearer ${jwt}`
-api.defaults.headers.post["Content-Type"]="application/json"
+// Interceptor ensures latest token is always picked up
+api.interceptors.request.use(
+  (config) => {
+    const jwt = localStorage.getItem("jwt");
+    console.log("jwt", jwt);
+    if (jwt) {
+      config.headers.Authorization = `Bearer ${jwt}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;
