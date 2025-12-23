@@ -8,6 +8,9 @@ import { GET_USER_REQUEST,
      LOGIN_SUCCESS,
      LOGIN_REQUEST, 
      LOGIN_FAILURE,
+     FORGOT_PASSWORD_REQUEST,
+     FORGOT_PASSWORD_SUCCESS,
+     FORGOT_PASSWORD_FAILURE,
      GET_USER_SUCCESS,
      GET_USER_FAILURE } from "./ActionType"
 
@@ -39,6 +42,20 @@ export const login=userData=>async(dispatch)=>{
         dispatch({type:LOGIN_FAILURE, payload:error})
     }
 }
+
+// Action to request a reset link (Forgot Password)
+export const forgotPassword = (email) => async (dispatch) => {
+    dispatch({ type: FORGOT_PASSWORD_REQUEST });
+    try {
+        // Typically a POST request with the user's email
+        const { data } = await api.post(`${API_BASE_URL}/auth/forgot-password`, { email });
+        dispatch({ type: FORGOT_PASSWORD_SUCCESS, payload: data.message });
+        console.log("Forgot password link sent", data);
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: FORGOT_PASSWORD_FAILURE, payload: error.message });
+    }
+};
 
 export const getUser=()=>async(dispatch)=>{
     dispatch({type:GET_USER_REQUEST})
