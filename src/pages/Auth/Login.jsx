@@ -13,12 +13,12 @@ import { login } from "@/Redux/Auth/Action";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-function Login() {
+function Login({ setAuthState }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // ✅ get auth state from redux
-  const { jwt, user, loading, error } = useSelector((store) => store.auth);
+  const { jwt, loading, error } = useSelector((store) => store.auth);
 
   const form = useForm({
     defaultValues: {
@@ -48,10 +48,10 @@ function Login() {
             <span>Forgot your password?</span>
             <Button
               variant="link"
-              onClick={() => navigate("/forgot-password")}
+              onClick={() => setAuthState("forgot")}
               className="p-0 h-auto font-bold underline !text-blue-600 hover:text-blue-800"
             >
-              Reset it here
+              Click here
             </Button>
           </div>
         </div>
