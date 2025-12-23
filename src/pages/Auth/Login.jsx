@@ -3,9 +3,9 @@ import {
     FormField,
     FormMessage,
     FormControl,
-    FormItem
-} from "@/components/ui/form"
-import { useForm } from "react-hook-form"
+  FormItem,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,7 +34,7 @@ function Login() {
     // ✅ redirect if already logged in
     useEffect(() => {
         if (jwt) {
-            navigate("/");   // change to your home page route
+      navigate("/"); // change to your home page route
         }
     }, [jwt, navigate]);
 
@@ -49,7 +49,7 @@ function Login() {
                         <Button
                             variant="link"
                             onClick={() => navigate("/forgot-password")}
-                            className="p-0 h-auto font-bold underline"
+              className="p-0 h-auto font-bold underline !text-blue-600 hover:text-blue-800"
                         >
                             Reset it here
                         </Button>
@@ -94,17 +94,13 @@ function Login() {
                         )}
                     />
 
-                    <Button
-                        type="submit"
-                        className="w-full ml-2"
-                        disabled={loading}
-                    >
+          <Button type="submit" className="w-full ml-2" disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </Button>
                 </form>
             </Form>
         </div>
-    )
+  );
 }
 
-export default Login
+export default Login;
