@@ -11,6 +11,9 @@ import { GET_USER_REQUEST,
      FORGOT_PASSWORD_REQUEST,
      FORGOT_PASSWORD_SUCCESS,
      FORGOT_PASSWORD_FAILURE,
+     RESET_PASSWORD_REQUEST,
+     RESET_PASSWORD_SUCCESS,
+     RESET_PASSWORD_FAILURE,
      GET_USER_SUCCESS,
      GET_USER_FAILURE } from "./ActionType"
 
@@ -54,6 +57,20 @@ export const forgotPassword = (email) => async (dispatch) => {
     } catch (error) {
         console.log(error);
         dispatch({ type: FORGOT_PASSWORD_FAILURE, payload: error.message });
+    }
+};
+
+// Action to set a new password (Reset Password)
+export const resetPassword = (resetData) => async (dispatch) => {
+    dispatch({ type: RESET_PASSWORD_REQUEST });
+    try {
+        // resetData usually contains { token, password }
+        const { data } = await api.post(`${API_BASE_URL}/auth/reset-password`, resetData);
+        dispatch({ type: RESET_PASSWORD_SUCCESS, payload: data.message });
+        console.log("Password reset successful", data);
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: RESET_PASSWORD_FAILURE, payload: error.message });
     }
 };
 
