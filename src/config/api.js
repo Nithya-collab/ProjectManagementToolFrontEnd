@@ -17,9 +17,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-console.log('jwt',jwt)
-
-api.defaults.headers.common["Authorization"]=`Bearer ${jwt}`
-api.defaults.headers.post["Content-Type"]="application/json"
+// Set static headers
+api.defaults.headers.post["Content-Type"] = "application/json";
 
 export default api;
