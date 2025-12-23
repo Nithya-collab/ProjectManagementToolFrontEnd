@@ -13,7 +13,11 @@ function ProjectCard({item}) {
   const handleDelete = () => {
       dispatch(deleteProject(item.id))
   }
- 
+
+  const handleUpdate = () => {
+    dispatch(updateProject(item.id))
+  }
+
   return (
     <Card className='p-5 w-full lg:max-w-3xl'>
       <div className="space-y-5">

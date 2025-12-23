@@ -2,11 +2,20 @@ import api from "@/config/api"
 import { API_BASE_URL } from "@/config/api"
 import { GET_USER_REQUEST,
      REGISTER_REQUEST,
-     REGISTER_SUCCESS , 
-     LOGOUT_REQUEST , 
+     REGISTER_SUCCESS, 
+     REGISTER_FAILURE,
+     LOGOUT_REQUEST, 
      LOGIN_SUCCESS,
      LOGIN_REQUEST, 
-     GET_USER_SUCCESS} from "./ActionType"
+     LOGIN_FAILURE,
+     FORGOT_PASSWORD_REQUEST,
+     FORGOT_PASSWORD_SUCCESS,
+     FORGOT_PASSWORD_FAILURE,
+     RESET_PASSWORD_REQUEST,
+     RESET_PASSWORD_SUCCESS,
+     RESET_PASSWORD_FAILURE,
+     GET_USER_SUCCESS,
+     GET_USER_FAILURE } from "./ActionType"
 
 export const register=userData=>async(dispatch)=>{
     dispatch({type:REGISTER_REQUEST})
@@ -18,6 +27,7 @@ export const register=userData=>async(dispatch)=>{
        }
     }catch(error) {
         console.log(error)
+        dispatch({type:REGISTER_FAILURE, payload:error})
     }
 }
 
@@ -32,17 +42,42 @@ export const login=userData=>async(dispatch)=>{
        console.log('LOGIN success',data)
     }catch(error) {
         console.log(error)
+        dispatch({type:LOGIN_FAILURE, payload:error})
     }
 }
+
+// Action to request a reset link (Forgot Password)
+export const forgotPassword = (email) => async (dispatch) => {
+    dispatch({ type: FORGOT_PASSWORD_REQUEST });
+    try {
+        // Typically a POST request with the user's email
+        const { data } = await api.post(`${API_BASE_URL}/auth/forgot-password`, { email });
+        dispatch({ type: FORGOT_PASSWORD_SUCCESS, payload: data.message });
+        console.log("Forgot password link sent", data);
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: FORGOT_PASSWORD_FAILURE, payload: error.message });
+    }
+};
+
+// Action to set a new password (Reset Password)
+export const resetPassword = (resetData) => async (dispatch) => {
+    dispatch({ type: RESET_PASSWORD_REQUEST });
+    try {
+        // resetData usually contains { token, password }
+        const { data } = await api.post(`${API_BASE_URL}/auth/reset-password`, resetData);
+        dispatch({ type: RESET_PASSWORD_SUCCESS, payload: data.message });
+        console.log("Password reset successful", data);
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: RESET_PASSWORD_FAILURE, payload: error.message });
+    }
+};
 
 export const getUser=()=>async(dispatch)=>{
     dispatch({type:GET_USER_REQUEST})
     try{
-       const {data} = await api.get(`${API_BASE_URL}/api/users/profile`,{
-          headers:{
-             Authorization:`Bearer ${localStorage.getItem("jwt")}`
-          }
-       })
+       const {data} = await api.get(`${API_BASE_URL}/api/users/profile`)
       //  if(data.jwt){
       //     localStorage.setItem('jwt',data.jwt)
           dispatch({type:GET_USER_SUCCESS,payload:data})
@@ -50,6 +85,7 @@ export const getUser=()=>async(dispatch)=>{
       console.log("user success",data)
     }catch(error) {
         console.log(error)
+        dispatch({type:GET_USER_FAILURE, payload:error})
     }
 }
 
