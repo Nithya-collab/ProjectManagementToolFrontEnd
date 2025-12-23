@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Signup from "./Signup";
 import Login from "./Login";
 import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import Home from "../Home/Home";
 import "./Auth.css";
 
@@ -19,6 +20,8 @@ function Auth() {
         return <Login setAuthState={setAuthState} />;
       case "forgot":
         return <ForgotPassword setAuthState={setAuthState} />;
+      case "reset":
+        return <ResetPassword setAuthState={setAuthState} />;
       case "authenticated":
         return <Home />;
       default:
@@ -63,8 +66,8 @@ function Auth() {
                 </Button>
               )}
 
-              {/* Back to login option for Forgot views */}
-              {authState === "forgot" && (
+              {/* Back to login option for Forgot/Reset views */}
+              {(authState === "forgot" || authState === "reset") && (
                 <Button
                   variant="link"
                   className="text-primary"
