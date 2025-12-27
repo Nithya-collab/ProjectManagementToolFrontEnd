@@ -10,8 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { register } from "@/Redux/Auth/Action";
-function Signup() {
+import { useSelector } from "react-redux";
+
+function Signup({ toggle }) {
     const dispatch = useDispatch();
+    const { auth } = useSelector(store => store);
     const form = useForm({
         defaultValues: {
             email: "",
@@ -22,12 +25,19 @@ function Signup() {
 
     const onSubmit = (data) => {
         dispatch(register(data))
-        console.log("create project data", data);
     }
 
     return (
         <div className="space-y-5">
             <h1 className="title">Register</h1>
+             {auth.error && auth.error.response?.data?.message==="email already exists !!" && 
+                       <div className="flex flex-col gap-2 items-center justify-center p-3 border border-red-400 bg-red-100 rounded-md text-red-600">
+                            <p>Account already exists with this email.</p>
+                            <Button variant="link" onClick={toggle} className="text-red-700 underline p-0 h-auto font-bold">
+                                Sign In here
+                            </Button>
+                       </div>
+             }
             <Form {...form}>
                 <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField
